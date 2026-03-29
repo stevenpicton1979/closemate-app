@@ -6,6 +6,7 @@ import { updateQuote } from './actions'
 
 const inputClass = 'w-full border border-zinc-700 rounded-lg px-3 py-3 text-base bg-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent'
 const labelClass = 'block text-sm font-medium text-zinc-300 mb-1'
+const optionalSpan = <span className="text-zinc-500 font-normal">(optional)</span>
 
 function formatAmount(amount: string): string {
   return '$' + Number(amount).toLocaleString('en-AU', { maximumFractionDigits: 0 })
@@ -21,7 +22,6 @@ export default async function QuotePage({
   if (!session.userId) redirect('/login')
 
   const quote = await getQuoteById(id, session.userId)
-
   if (!quote) notFound()
 
   const action = updateQuote.bind(null, quote.id)
@@ -33,17 +33,30 @@ export default async function QuotePage({
         ← Back
       </Link>
 
-      {/* Read-only details */}
+      {/* Read-only summary: name and amount only */}
       <div className="mt-4 mb-6">
         <h1 className="text-xl font-semibold text-zinc-100">{quote.customerName}</h1>
-        <p className="text-zinc-400 mt-1">{quote.jobDescription}</p>
-        <p className="text-2xl font-semibold text-zinc-100 mt-3">{formatAmount(quote.quoteAmount)}</p>
+        <p className="text-2xl font-semibold text-zinc-100 mt-1">{formatAmount(quote.quoteAmount)}</p>
       </div>
 
       <div className="border-t border-zinc-700 mb-6" />
 
-      {/* Editable fields */}
+      {/* Editable fields — all four always rendered */}
       <form action={action} className="space-y-5">
+
+        <div>
+          <label htmlFor="jobDescription" className={labelClass}>
+            Job description {optionalSpan}
+          </label>
+          <textarea
+            id="jobDescription"
+            name="jobDescription"
+            rows={3}
+            defaultValue={quote.jobDescription ?? ''}
+            placeholder="Describe the job..."
+            className={inputClass}
+          />
+        </div>
 
         <div>
           <label htmlFor="status" className={labelClass}>Status</label>
@@ -62,7 +75,7 @@ export default async function QuotePage({
 
         <div>
           <label htmlFor="followUpDate" className={labelClass}>
-            Follow-up date <span className="text-zinc-500 font-normal">(optional)</span>
+            Follow-up date {optionalSpan}
           </label>
           <input
             id="followUpDate"
@@ -75,13 +88,14 @@ export default async function QuotePage({
 
         <div>
           <label htmlFor="notes" className={labelClass}>
-            Notes <span className="text-zinc-500 font-normal">(optional)</span>
+            Notes {optionalSpan}
           </label>
           <textarea
             id="notes"
             name="notes"
             rows={4}
             defaultValue={quote.notes ?? ''}
+            placeholder="Add notes about this job..."
             className={inputClass}
           />
         </div>

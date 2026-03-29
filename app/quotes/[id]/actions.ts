@@ -10,6 +10,7 @@ export async function updateQuote(id: string, formData: FormData) {
   const session = await getSession()
   if (!session.userId) redirect('/login')
 
+  const jobDescription = (formData.get('jobDescription') as string).trim()
   const status = formData.get('status') as 'draft' | 'sent' | 'won' | 'lost'
   const followUpDate = formData.get('followUpDate') as string
   const notes = (formData.get('notes') as string).trim()
@@ -17,6 +18,7 @@ export async function updateQuote(id: string, formData: FormData) {
   await db
     .update(quotes)
     .set({
+      jobDescription,
       status,
       followUpDate: followUpDate || null,
       notes: notes || null,

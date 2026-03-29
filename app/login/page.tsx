@@ -1,4 +1,6 @@
 import { login } from './actions'
+import PasswordInput from '@/components/password-input'
+import SubmitButton from '@/components/submit-button'
 
 const inputClass = 'w-full border border-zinc-700 rounded-lg px-3 py-3 text-base bg-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent'
 
@@ -34,21 +36,9 @@ export default async function LoginPage({
           </div>
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-zinc-300 mb-1">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              autoComplete="current-password"
-              className={inputClass}
-            />
+            <PasswordInput id="password" name="password" autoComplete="current-password" />
           </div>
-          <button
-            type="submit"
-            className="w-full bg-zinc-100 text-zinc-900 text-sm font-medium py-3 rounded-full mt-2"
-          >
-            Sign in
-          </button>
+          <SubmitButton label="Sign in" />
         </form>
 
         <p className="text-sm text-zinc-500 text-center mt-6">
