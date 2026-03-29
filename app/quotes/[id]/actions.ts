@@ -2,10 +2,14 @@
 
 import { db } from '@/lib/db'
 import { quotes } from '@/lib/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
+import { getSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 
 export async function updateQuote(id: string, formData: FormData) {
+  const session = await getSession()
+  if (!session.userId) redirect('/login')
+
   const status = formData.get('status') as 'draft' | 'sent' | 'won' | 'lost'
   const followUpDate = formData.get('followUpDate') as string
   const notes = (formData.get('notes') as string).trim()
@@ -18,7 +22,7 @@ export async function updateQuote(id: string, formData: FormData) {
       notes: notes || null,
       updatedAt: new Date(),
     })
-    .where(eq(quotes.id, id))
+    .where(and(eq(quotes.id, id), eq(quotes.userId, session.userId)))
 
   redirect('/')
 }

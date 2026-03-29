@@ -2,9 +2,13 @@
 
 import { db } from '@/lib/db'
 import { quotes } from '@/lib/schema'
+import { getSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 
 export async function createQuote(formData: FormData) {
+  const session = await getSession()
+  if (!session.userId) redirect('/login')
+
   const customerName = (formData.get('customerName') as string).trim()
   const jobDescription = (formData.get('jobDescription') as string).trim()
   const quoteAmount = formData.get('quoteAmount') as string
@@ -13,6 +17,7 @@ export async function createQuote(formData: FormData) {
   const notes = (formData.get('notes') as string).trim()
 
   await db.insert(quotes).values({
+    userId: session.userId,
     customerName,
     jobDescription,
     quoteAmount,

@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import QuoteCard from '@/components/quote-card'
 import { getOverdueQuotes, getDueTodayQuotes, getRecentQuotes, getAllQuotes } from '@/lib/queries'
+import { getSession } from '@/lib/auth'
+import { logout } from '@/app/actions'
+import { redirect } from 'next/navigation'
 import { Quote } from '@/lib/schema'
 
 const STATUS_FILTERS = [
@@ -42,14 +45,21 @@ export default async function Page({
 }: {
   searchParams: Promise<{ status?: string }>
 }) {
-  const { status } = await searchParams
+  const session = await getSession()
+  if (!session.userId) redirect('/login')
 
-  const [overdue, dueToday, recent, all] = await Promise.all([
-    getOverdueQuotes(),
-    getDueTodayQuotes(),
-    getRecentQuotes(),
-    getAllQuotes(status),
+  const { status } = await searchParams
+  const userId = session.userId
+
+  const [overdue, dueToday, recentRaw, all] = await Promise.all([
+    getOverdueQuotes(userId),
+    getDueTodayQuotes(userId),
+    getRecentQuotes(userId),
+    getAllQuotes(userId, status),
   ])
+
+  const priorityIds = new Set([...overdue.map(q => q.id), ...dueToday.map(q => q.id)])
+  const recent = recentRaw.filter(q => !priorityIds.has(q.id))
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 pb-12 space-y-8">
@@ -57,12 +67,19 @@ export default async function Page({
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold">CloseMate</h1>
-        <Link
-          href="/quotes/new"
-          className="text-sm bg-zinc-100 text-zinc-900 px-4 py-2.5 rounded-full font-medium"
-        >
-          + New quote
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/quotes/new"
+            className="text-sm bg-zinc-100 text-zinc-900 px-4 py-2.5 rounded-full font-medium"
+          >
+            + New quote
+          </Link>
+          <form action={logout}>
+            <button type="submit" className="text-sm text-zinc-500 hover:text-zinc-300">
+              Sign out
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* Overdue */}
@@ -70,6 +87,11 @@ export default async function Page({
 
       {/* Due today */}
       <Section title="Due today" quotes={dueToday} titleClass="text-amber-400" showActions variant="today" />
+
+      {/* No follow-ups state */}
+      {overdue.length === 0 && dueToday.length === 0 && (
+        <p className="text-sm text-zinc-500 text-center py-1">No follow-ups today 👍</p>
+      )}
 
       {/* Recent */}
       <Section title="Recent" quotes={recent} />

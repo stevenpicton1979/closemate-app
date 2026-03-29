@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Quote } from '@/lib/schema'
-import { markWon, markLost, snoozeQuote } from '@/app/quotes/actions'
+import QuickActions from './quick-actions'
 
 const STATUS_LABEL: Record<string, string> = {
   draft: 'Draft',
@@ -46,10 +46,6 @@ export default function QuoteCard({
   const isOverdue = !!quote.followUpDate && quote.followUpDate < today
   const borderClass = VARIANT_BORDER[variant ?? 'default']
 
-  const wonAction = markWon.bind(null, quote.id)
-  const lostAction = markLost.bind(null, quote.id)
-  const snoozeAction = snoozeQuote.bind(null, quote.id)
-
   return (
     <div className={`border ${borderClass} rounded-xl overflow-hidden`}>
       <Link
@@ -73,25 +69,7 @@ export default function QuoteCard({
         </div>
       </Link>
 
-      {showActions && (
-        <div className="flex gap-2 px-3 py-2.5 bg-zinc-900/60 border-t border-zinc-700/50">
-          <form action={wonAction} className="flex-1">
-            <button type="submit" className="w-full text-xs font-medium text-green-400 py-2 rounded-lg border border-green-900/50 bg-green-900/20 active:bg-green-900/40">
-              Won
-            </button>
-          </form>
-          <form action={lostAction} className="flex-1">
-            <button type="submit" className="w-full text-xs font-medium text-red-400 py-2 rounded-lg border border-red-900/50 bg-red-900/20 active:bg-red-900/40">
-              Lost
-            </button>
-          </form>
-          <form action={snoozeAction} className="flex-1">
-            <button type="submit" className="w-full text-xs font-medium text-zinc-300 py-2 rounded-lg border border-zinc-600 bg-zinc-700/40 active:bg-zinc-600/50">
-              Snooze
-            </button>
-          </form>
-        </div>
-      )}
+      {showActions && <QuickActions quoteId={quote.id} />}
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { getQuoteById } from '@/lib/queries'
+import { getSession } from '@/lib/auth'
 import { updateQuote } from './actions'
 
 const inputClass = 'w-full border border-zinc-700 rounded-lg px-3 py-3 text-base bg-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent'
@@ -16,7 +17,10 @@ export default async function QuotePage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const quote = await getQuoteById(id)
+  const session = await getSession()
+  if (!session.userId) redirect('/login')
+
+  const quote = await getQuoteById(id, session.userId)
 
   if (!quote) notFound()
 
