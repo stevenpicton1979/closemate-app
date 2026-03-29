@@ -5,6 +5,7 @@ import { getSession } from '@/lib/auth'
 import { logout } from '@/app/actions'
 import { redirect } from 'next/navigation'
 import { Quote } from '@/lib/schema'
+import HomeScreenPrompt from '@/components/home-screen-prompt'
 
 const STATUS_FILTERS = [
   { label: 'All', value: '' },
@@ -81,6 +82,8 @@ export default async function Page({
           </form>
         </div>
       </div>
+
+      <HomeScreenPrompt />
 
       {/* Overdue */}
       <Section title="Overdue" quotes={overdue} titleClass="text-red-400" showActions variant="overdue" />

@@ -3,10 +3,17 @@ import { createQuote } from './actions'
 
 const inputClass = 'w-full border border-zinc-700 rounded-lg px-3 py-3 text-base bg-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent'
 const labelClass = 'block text-sm font-medium text-zinc-300 mb-1'
+const optionalSpan = <span className="text-zinc-500 font-normal">(optional)</span>
+
+function tomorrow(): string {
+  const d = new Date()
+  d.setDate(d.getDate() + 1)
+  return d.toISOString().split('T')[0]
+}
 
 export default function NewQuotePage() {
   return (
-    <div className="max-w-lg mx-auto px-4 py-6 pb-12">
+    <div className="max-w-lg mx-auto px-4 py-6 pb-16">
 
       <Link href="/" className="text-sm text-zinc-400 hover:text-zinc-200">
         ← Back
@@ -25,17 +32,20 @@ export default function NewQuotePage() {
             required
             autoFocus
             autoComplete="off"
+            enterKeyHint="next"
             className={inputClass}
           />
         </div>
 
         <div>
-          <label htmlFor="jobDescription" className={labelClass}>Job description</label>
+          <label htmlFor="jobDescription" className={labelClass}>
+            Job description {optionalSpan}
+          </label>
           <textarea
             id="jobDescription"
             name="jobDescription"
-            required
             rows={3}
+            enterKeyHint="next"
             className={inputClass}
           />
         </div>
@@ -50,6 +60,7 @@ export default function NewQuotePage() {
             min="0"
             step="0.01"
             placeholder="0.00"
+            enterKeyHint="next"
             className={inputClass}
           />
         </div>
@@ -66,24 +77,27 @@ export default function NewQuotePage() {
 
         <div>
           <label htmlFor="followUpDate" className={labelClass}>
-            Follow-up date <span className="text-zinc-500 font-normal">(optional)</span>
+            Follow-up date {optionalSpan}
           </label>
           <input
             id="followUpDate"
             name="followUpDate"
             type="date"
+            defaultValue={tomorrow()}
+            enterKeyHint="next"
             className={inputClass}
           />
         </div>
 
         <div>
           <label htmlFor="notes" className={labelClass}>
-            Notes <span className="text-zinc-500 font-normal">(optional)</span>
+            Notes {optionalSpan}
           </label>
           <textarea
             id="notes"
             name="notes"
             rows={3}
+            enterKeyHint="done"
             className={inputClass}
           />
         </div>
