@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { getQuoteById } from '@/lib/queries'
 import { getSession } from '@/lib/auth'
 import { updateQuote } from './actions'
+import PricingSection from '@/components/pricing-section'
 
 const inputClass = 'w-full border border-zinc-700 rounded-lg px-3 py-3 text-base bg-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent'
 const labelClass = 'block text-sm font-medium text-zinc-300 mb-1'
@@ -33,15 +34,13 @@ export default async function QuotePage({
         ← Back
       </Link>
 
-      {/* Read-only summary: name and amount only */}
+      {/* Read-only summary */}
       <div className="mt-4 mb-6">
         <h1 className="text-xl font-semibold text-zinc-100">{quote.customerName}</h1>
-        <p className="text-2xl font-semibold text-zinc-100 mt-1">{formatAmount(quote.quoteAmount)}</p>
       </div>
 
       <div className="border-t border-zinc-700 mb-6" />
 
-      {/* Editable fields — all four always rendered */}
       <form action={action} className="space-y-5">
 
         <div>
@@ -85,6 +84,11 @@ export default async function QuotePage({
             className={inputClass}
           />
         </div>
+
+        <PricingSection
+          initialTotal={quote.quoteAmount}
+          initialBreakdown={quote.breakdown}
+        />
 
         <div>
           <label htmlFor="notes" className={labelClass}>

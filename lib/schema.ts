@@ -17,6 +17,7 @@ export const quotes = pgTable('quotes', {
   quoteAmount: numeric('quote_amount', { precision: 10, scale: 2 }).notNull(),
   status: statusEnum('status').notNull().default('draft'),
   followUpDate: date('follow_up_date'),
+  breakdown: text('breakdown'),
   notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),

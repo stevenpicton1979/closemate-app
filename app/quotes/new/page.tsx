@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createQuote } from './actions'
 import SubmitButton from '@/components/submit-button'
+import PricingSection from '@/components/pricing-section'
 
 const inputClass = 'w-full border border-zinc-700 rounded-lg px-3 py-3 text-base bg-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent'
 const labelClass = 'block text-sm font-medium text-zinc-300 mb-1'
@@ -51,20 +52,7 @@ export default function NewQuotePage() {
           />
         </div>
 
-        <div>
-          <label htmlFor="quoteAmount" className={labelClass}>Quote amount ($)</label>
-          <input
-            id="quoteAmount"
-            name="quoteAmount"
-            type="number"
-            required
-            min="0"
-            step="0.01"
-            placeholder="0.00"
-            enterKeyHint="next"
-            className={inputClass}
-          />
-        </div>
+        <PricingSection required />
 
         <div>
           <label htmlFor="status" className={labelClass}>Status</label>

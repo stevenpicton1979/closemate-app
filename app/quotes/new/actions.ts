@@ -14,6 +14,7 @@ export async function createQuote(formData: FormData) {
   const quoteAmount = formData.get('quoteAmount') as string
   const status = (formData.get('status') as string) || 'draft'
   const followUpDate = formData.get('followUpDate') as string
+  const breakdown = (formData.get('breakdown') as string).trim()
   const notes = (formData.get('notes') as string).trim()
 
   await db.insert(quotes).values({
@@ -23,6 +24,7 @@ export async function createQuote(formData: FormData) {
     quoteAmount,
     status: status as 'draft' | 'sent' | 'won' | 'lost',
     followUpDate: followUpDate || null,
+    breakdown: breakdown || null,
     notes: notes || null,
   })
 
